@@ -1,3 +1,5 @@
 venv/*
 .idea/*
 obfile/__pycache__/*
+test/*
+test.py
