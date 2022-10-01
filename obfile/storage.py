@@ -32,7 +32,7 @@ def encrypt_file(file, key=None, remove_original: bool = False):
 
 def encrypt_dir(directory, depth: int = 0, remove_original: bool = False):
     key = getpass("Password: ")
-    for sub_dir in depth_lister(directory, depth):
+    for sub_dir in utils.depth_lister(directory, depth):
         files = utils.filter_files(sub_dir)
         for file in files:
             encrypt_file(os.path.join(sub_dir, file), key, remove_original)
