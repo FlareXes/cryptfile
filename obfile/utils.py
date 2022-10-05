@@ -11,7 +11,11 @@ def filter_files(directory: str, dot_enc: str = False):
 
 
 def depth_lister(root_directory: str, depth: int):
-    for i in range(0, depth + 1):
-        dirs_depth = glob.glob(os.path.join(root_directory, '*/' * i))
-        for dir_depth in dirs_depth:
-            yield dir_depth
+    if depth < 0:
+        for subdir, _, _ in os.walk(root_directory):
+            yield subdir
+    else:
+        for i in range(0, depth + 1):
+            dirs_depth = glob.glob(os.path.join(root_directory, '*/' * i))
+            for dir_depth in dirs_depth:
+                yield dir_depth
