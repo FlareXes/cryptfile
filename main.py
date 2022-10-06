@@ -27,5 +27,3 @@ if __name__ == "__main__":
 
     if args.decrypt_dir is not None and len(args.decrypt_dir) == 1:
         storage.decrypt_dir(args.decrypt_dir[0], args.depth, args.remove)
-
-    # TODO: Update README.md
