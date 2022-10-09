@@ -1,6 +1,8 @@
 # obfile
 `Obfile` or `Obfuscate File` is a command line utility to encrypt or decrypt the file with AES256.
 
+> **WARNING**: In future the whole project gonna be compiled into one file to make it more like a utility
+
 # Installation
 ```bash
 git clone https://github.com/FlareXes/obfile.git && cd obfile

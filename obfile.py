@@ -11,25 +11,31 @@ from Cryptodome.Random import get_random_bytes
 
 def encrypt(data, key):
     random_bytes = get_random_bytes(32).__str__()
-    private_key = scrypt(password=key, salt=random_bytes,
-                         key_len=32, N=2 ** 20, r=8, p=1)
+    private_key = scrypt(
+        password=key, salt=random_bytes, key_len=32, N=2**20, r=8, p=1
+    )
 
     cipher = AES.new(private_key, AES.MODE_GCM)
     ciphertext, tag = cipher.encrypt_and_digest(data)
 
-    configs = {'salt': random_bytes, 'ciphertext': ciphertext,
-               'nonce': cipher.nonce, 'tag': tag}
+    configs = {
+        "salt": random_bytes,
+        "ciphertext": ciphertext,
+        "nonce": cipher.nonce,
+        "tag": tag,
+    }
     return configs
 
 
 def decrypt(configs, key):
-    random_bytes = configs['salt']
-    ciphertext = configs['ciphertext']
-    nonce = configs['nonce']
-    tag = configs['tag']
+    random_bytes = configs["salt"]
+    ciphertext = configs["ciphertext"]
+    nonce = configs["nonce"]
+    tag = configs["tag"]
 
-    private_key = scrypt(password=key, salt=random_bytes,
-                         key_len=32, N=2 ** 20, r=8, p=1)
+    private_key = scrypt(
+        password=key, salt=random_bytes, key_len=32, N=2**20, r=8, p=1
+    )
     cipher = AES.new(private_key, AES.MODE_GCM, nonce)
 
     data = cipher.decrypt_and_verify(ciphertext, tag)
@@ -40,7 +46,11 @@ def filter_files(directory: str, dot_enc: str = False):
     if os.path.isdir(directory):
         dir_obj = os.scandir(directory)
         if dot_enc:
-            return [file.name for file in dir_obj if file.is_file() and file.name.endswith('.enc')]
+            return [
+                file.name
+                for file in dir_obj
+                if file.is_file() and file.name.endswith(".enc")
+            ]
         return [file.name for file in dir_obj if file.is_file()]
 
 
@@ -50,7 +60,7 @@ def depth_lister(root_directory: str, depth: int):
             yield subdir
     else:
         for i in range(0, depth + 1):
-            dirs_depth = glob.glob(os.path.join(root_directory, '*/' * i))
+            dirs_depth = glob.glob(os.path.join(root_directory, "*/" * i))
             for dir_depth in dirs_depth:
                 yield dir_depth
 
@@ -110,19 +120,44 @@ def decrypt_dir(directory, depth: int = 0, remove_original: bool = False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Command line utility to encrypt or decrypt the file with AES256.")
-    parser.add_argument("-e", "--encrypt", nargs=1, action="store",
-                        help="encrypt the specified file", type=str)
-    parser.add_argument("-d", "--decrypt", nargs=1,
-                        help="decrypt the specified file", type=str)
-    parser.add_argument("-r", "--remove", action="store_true",
-                        help="delete original file after any operation")
-    parser.add_argument("-er", "--encrypt-dir", nargs=1, action="store",
-                        help="encrypt directory recursively", type=str)
-    parser.add_argument("-dr", "--decrypt-dir", nargs=1,
-                        help="decrypt directory recursively", type=str)
+        prog="obfile",
+        description="Command line utility to encrypt or decrypt the file with AES256.",
+        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=47),
+    )
     parser.add_argument(
-        "--depth", default=0, help="depth of directory to recursively preform any operation", type=int)
+        "-e",
+        "--encrypt",
+        nargs=1,
+        action="store",
+        help="encrypt the specified file",
+        type=str,
+    )
+    parser.add_argument(
+        "-d", "--decrypt", nargs=1, help="decrypt the specified file", type=str
+    )
+    parser.add_argument(
+        "-r",
+        "--remove",
+        action="store_true",
+        help="delete original file after any operation",
+    )
+    parser.add_argument(
+        "-er",
+        "--encrypt-dir",
+        nargs=1,
+        action="store",
+        help="encrypt directory recursively",
+        type=str,
+    )
+    parser.add_argument(
+        "-dr", "--decrypt-dir", nargs=1, help="decrypt directory recursively", type=str
+    )
+    parser.add_argument(
+        "--depth",
+        default=0,
+        help="depth of directory to recursively preform any operation",
+        type=int,
+    )
 
     args = parser.parse_args()
 

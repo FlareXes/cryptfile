@@ -3,3 +3,4 @@ venv/*
 obfile/__pycache__/*
 test/*
 test.py
+.vscode

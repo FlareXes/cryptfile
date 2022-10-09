@@ -4,7 +4,8 @@ import sys
 from obfile import storage
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Command line utility to encrypt or decrypt the file with AES256.")
+    parser = argparse.ArgumentParser(prog="obfile", description="Command line utility to encrypt or decrypt the file with AES256.", \
+        formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=47))
     parser.add_argument("-e", "--encrypt", nargs=1, action="store", help="encrypt the specified file", type=str)
     parser.add_argument("-d", "--decrypt", nargs=1, help="decrypt the specified file", type=str)
     parser.add_argument("-r", "--remove", action="store_true", help="delete original file after any operation")
