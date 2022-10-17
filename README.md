@@ -1,69 +1,70 @@
-# obfile
-`Obfile` or `Obfuscate File` is a command line utility to encrypt or decrypt the file with AES256.
-
-> **WARNING**: In future the whole project gonna be compiled into one file to make it more like a utility
+# Cryptfile
+`Cryptfile` is a command line utility to encrypt or decrypt the file with AES256.
 
 # Installation
-```bash
-git clone https://github.com/FlareXes/obfile.git && cd obfile
+```
+git clone https://github.com/FlareXes/cryptfile.git && cd cryptfile
 
-pip install -r requirements.txt
+chmod +x setup
+
+./setup
 ```
 
 # Usage
-### Files
+### File
 - To encrypt the file
     ```
-    python main.py -e <filename>
+    cryptfile -e <filename>
     ```
     Above command will generate a `.enc` file with is encrypted with password
 
 
 - To decrypt the file
     ```
-    python main.py -d <filename>.enc
+    cryptfile -d <filename>.enc
     ```
 
 - To remove original file after any operation
     ```
-    python main.py -d <filename>.enc -r
+    cryptfile -d <filename>.enc -r
     ```
 ### Directory
 - To encrypt the directory
     ```
-    python main.py -er <dirname>
+    cryptfile -er <dirname>
     ```
     Recursively encrypt all files inside directory but not inside subdirectories
 
 
 - To encrypt the directory with depth
     ```
-    python main.py -er <dirname> --depth 2
+    cryptfile -er <dirname> --depth 2
     ```
     Recursively encrypt all files inside specified directory till defined depth
 
 
 - To encrypt whole directory till possible
     ```
-    python main.py -er <dirname> --depth -1
+    cryptfile -er <dirname> --depth -1
     ```
     Any negative value of `--depth` will recursively encrypt all files inside specified directory
 
 
 - To decrypt the specified directory
     ```
-    python main.py -dr <dirname> --depth 2
+    cryptfile -dr <dirname> --depth 2
     ```
   Decrypt the file inside specified directory till depth 2
 
 
 - To remove original file after any operation use `-r`
     ```
-    python main.py -dr <dirname> --depth -1 -r
+    cryptfile -dr <dirname> --depth -1 -r
     ```
 
 ---
 
-> Note: `obfile` doesn't follow symbolic links.
+> Note: `Cryptfile` doesn't follow symbolic links.
+
 # Licence 
-Licenced Under [MIT License](LICENSE)
+This work by [FlareXes](https://github.com/FlareXes) is Licenced Under [GNU GPLv3](LICENCE)

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+pip install requirements.txt
+
+chmod +x cryptfile
+
+sudo mkdir -p /opt/cryptfile/
+
+sudo cp cryptfile.py /opt/cryptfile/
+
+sudo cp cryptfile /usr/local/bin/

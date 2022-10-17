@@ -1,0 +1,5 @@
+#!/bin/sh
+
+python3 /opt/cryptfile/cryptfile.py "$@"
+
+exit 0

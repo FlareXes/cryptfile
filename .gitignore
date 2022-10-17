@@ -1,6 +1,6 @@
-venv/*
-.idea/*
-obfile/__pycache__/*
-test/*
+venv/
+.idea/
+__pycache__/
+test/
 test.py
 .vscode
