@@ -1,8 +1,7 @@
-import os
-import sys
-import glob
-import pickle
 import argparse
+import os
+import pickle
+import sys
 from getpass import getpass
 
 from Cryptodome.Cipher import AES
@@ -54,10 +53,18 @@ class Utils:
             for subdir, _, _ in os.walk(root_directory):
                 yield subdir
         else:
-            for i in range(0, depth + 1):
-                dirs_depth = glob.glob(os.path.join(root_directory, '*/' * i))
-                for dir_depth in dirs_depth:
-                    yield dir_depth
+            priv_dirpath = None
+            depth_from_root = len(root_directory.split('/')) + depth
+            for s, _, _ in os.walk(root_directory):
+                dirpath = s.split("/")[:depth_from_root]
+                if dirpath != priv_dirpath:
+                    priv_dirpath = dirpath
+                    yield os.path.join(*dirpath)
+
+            # for i in range(0, depth + 1):
+            #     dirs_depth = glob.glob(os.path.join(root_directory, '*/' * i))
+            #     for dir_depth in dirs_depth:
+            #         yield dir_depth
 
 
 class Storage(Security, Utils):
