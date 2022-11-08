@@ -87,8 +87,10 @@ class Storage(Security, Utils):
         with open(file, "rb") as f:
             data = f.read()
         if key is None: key = getpass("Password: ")
+        print(f"Encrypting {file}", end="\r")
         enc_data = Security.encrypt(data, key)
         self.save_file(enc_data, file)
+        print(f"Encrypting {file} \t [+] Completed", end="\n", flush=True)
         if remove_original: self.remove_file(file)
 
     def encrypt_dir(self, directory, depth: int = 0, remove_original: bool = False):
@@ -101,9 +103,11 @@ class Storage(Security, Utils):
     def decrypt_file(self, enc_file, key=None, remove_original: bool = False):
         enc_data = self.open_file(enc_file)
         if key is None: key = getpass("Password: ")
+        print(f"Decrypting {enc_file}", end="\r")
         dec_data = Security.decrypt(enc_data, key)
         with open(enc_file.split(".enc")[0], "wb") as f:
             f.write(dec_data)
+        print(f"Decrypting {enc_file} \t [+] Completed", end="\n", flush=True)
         if remove_original: self.remove_file(enc_file)
 
     def decrypt_dir(self, directory, depth: int = 0, remove_original: bool = False):
