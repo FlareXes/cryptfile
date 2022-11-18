@@ -37,6 +37,16 @@ class Security:
         data = cipher.decrypt_and_verify(ciphertext, tag)
         return data
 
+    @staticmethod
+    def getpass():
+        p1 = getpass("Enter Password: ")
+        p2 = getpass("Verify Password: ")
+
+        if p1 == p2:
+            return p1
+        else:
+            print(">>> Incorrect Password ! <<<")
+            sys.exit(1)
 
 class Utils:
     @staticmethod
@@ -86,7 +96,7 @@ class Storage(Security, Utils):
     def encrypt_file(self, file, key=None, remove_original: bool = False):
         with open(file, "rb") as f:
             data = f.read()
-        if key is None: key = getpass("Password: ")
+        if key is None: key = Security.getpass()
         print(f"Encrypting {file}", end="\r")
         enc_data = Security.encrypt(data, key)
         self.save_file(enc_data, file)
@@ -94,7 +104,7 @@ class Storage(Security, Utils):
         if remove_original: self.remove_file(file)
 
     def encrypt_dir(self, directory, depth: int = 0, remove_original: bool = False):
-        key = getpass("Password: ")
+        key = Security.getpass()
         for sub_dir in Utils.depth_lister(directory, depth):
             files = Utils.filter_files(sub_dir)
             for file in files:
