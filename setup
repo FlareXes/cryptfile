@@ -1,11 +1,60 @@
 #!/bin/sh
 
-pip install -r requirements.txt
+# Print text in colored format
+function log_echo() {
+  # $1 is the text to print
+  # $2 is the color of the text
 
-chmod +x cryptfile
+  if [ "$2" == "red" ]; then
+    # Print the text in red
+    echo -e "\033[1;31m$1\033[0m" >&2
+    exit 1
 
-sudo mkdir -p /opt/cryptfile/
+  elif [ "$2" == "green" ]; then
+    # Print the text in green
+    echo -e "\033[1;32m$1\033[0m"
 
-sudo cp cryptfile.py /opt/cryptfile/
+  else
+    # If the color is not recognized, print the text in the default color
+    echo "$1"
+  fi
+}
 
-sudo cp cryptfile /usr/local/bin/
+# Install required dependencies
+if ! pip install -r requirements.txt; then
+  log_echo "Error: Failed to install the dependencies" "red"
+fi
+
+# Make the cryptfile script executable
+if ! chmod +x ./cryptfile; then
+  log_echo "Error: Failed to make the cryptfile executable" "red"
+fi
+
+# Create the /opt/cryptfile/ directory if it does not exist
+if ! [ -d /opt/cryptfile/ ]; then
+  if ! sudo mkdir -p /opt/cryptfile/; then
+    log_echo "Error: Failed to create the /opt/cryptfile/ directory" "red"
+  fi
+fi
+
+# Copy cryptfile.py file to /opt/cryptfile/
+if ! sudo cp ./cryptfile.py /opt/cryptfile/; then
+  log_echo "Error: Failed to copy files to /opt/cryptfile/" "red"
+fi
+
+# Copy the 'cryptfile' script to /usr/local/bin/cryptfile
+if ! sudo cp ./cryptfile /usr/local/bin/cryptfile; then
+  log_echo "Error: Failed to copy the 'cryptfile' script to /usr/local/bin/cryptfile" "red"
+fi
+
+# Make the /opt/cryptfile/ directory owned by the current user
+if ! sudo chown -R "$(whoami):$(whoami)" /opt/cryptfile/; then
+  log_echo "Error: Failed to change ownership of /opt/cryptfile/" "red"
+fi
+
+# Make the /usr/local/bin/cryptfile owned by the current user
+if ! sudo chown "$(whoami):$(whoami)" /usr/local/bin/cryptfile; then
+  log_echo "Error: Failed to change ownership of /usr/local/bin/cryptfile" "red"
+fi
+
+log_echo "Now you can delete cloned repository" "green"
