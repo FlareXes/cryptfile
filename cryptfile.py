@@ -211,15 +211,15 @@ class Security:
 class Cryptfile:
     """Cryptfile class provides user interation functionality and prepare files for encryption and decryption."""
 
-    def __init__(self, file: str = None, directory: str = None):
+    def __init__(self, files: str = None, directory: str = None):
         """Initializes the Cryptfile object
-        :param file: The file to be encrypted or decrypted
-        :type file: str
+        :param files: The file to be encrypted or decrypted
+        :type files: str
         :param directory: The directory to be encrypted or decrypted
-        :type file: str
+        :type directory: str
         """
 
-        self.file = file
+        self.files = files
         self.directory = directory
 
     def encrypt_file(self):
@@ -233,18 +233,20 @@ class Cryptfile:
         after encryption: example.txt.enc
         """
 
-        # Get file content in bytes format to encrypt
-        data = Utils.open_file(self.file)
         # get password hash
         password_hash = Security.getpass()
 
-        print(f"\nEncrypting {self.file}", end="\r")
-        # Encrypt file content stored in 'data' variable
-        cc = Security(password_hash).encrypt(data)
+        for file in self.files:
+            # Get file content in bytes format to encrypt
+            data = Utils.open_file(file)
 
-        # Save encrypted content with original file and '.enc' extension
-        Utils.save_cc(cc, self.file)
-        print(f"Encrypting {self.file} \t [+] Completed", end="\n\n", flush=True)
+            print(f"\nEncrypting [ {file} ]", end="\r")
+            # Encrypt file content stored in 'data' variable
+            cc = Security(password_hash).encrypt(data)
+
+            # Save encrypted content with original file and '.enc' extension
+            Utils.save_cc(cc, file)
+            print(f"Encrypting [ {file} ] \t [+] Completed", end="\n", flush=True)
 
     def decrypt_file(self):
         """
@@ -253,18 +255,21 @@ class Cryptfile:
         or with the '.cryptfile' extension if any file is supplied for decryption without `.enc` extension.
         """
 
-        # Get file content in picked bytes format to decrypt
-        cc = Utils.open_file(self.file, pickled=True)
         # Get password hash
         password_hash = Security.getpass()
 
-        print(f"\nDecrypting {self.file}", end="\r")
-        # Decrypt file content stored in 'cc' variable
-        data = Security(password_hash).decrypt(cc)
-        # Save decrypted content with provided filename
-        # without '.enc' extension or with '.cryptfile' extension
-        Utils.save_file(data, self.file)
-        print(f"Decrypting {self.file} \t [+] Completed", end="\n\n", flush=True)
+        for file in self.files:
+            # Get file content in picked bytes format to decrypt
+            cc = Utils.open_file(file, pickled=True)
+
+            print(f"\nDecrypting [ {file} ]", end="\r")
+            # Decrypt file content stored in 'cc' variable
+            data = Security(password_hash).decrypt(cc)
+
+            # Save decrypted content with provided filename
+            # without '.enc' extension or with '.cryptfile' extension
+            Utils.save_file(data, file)
+            print(f"Decrypting [ {file} ] \t [+] Completed", end="\n", flush=True)
 
     def encrypt_dir(self):
         print(f"[+] Archiving {self.directory}\n")
@@ -277,11 +282,11 @@ class Cryptfile:
         os.remove(zip_loc)
 
     def decrypt_dir(self):
-        Cryptfile(self.file).decrypt_file()
+        Cryptfile(self.files).decrypt_file()
 
         # extract zipfile after encryption
-        print(f"Extracting archived files {self.file}")
-        zip_file = self.file.split(".enc")[0]
+        print(f"Extracting archived files {self.files}")
+        zip_file = self.files.split(".enc")[0]
         Utils.unzip_dir(zip_file)
 
         # Remove zipfile after encryption
@@ -291,18 +296,20 @@ class Cryptfile:
 
 def process(args):
     # Start file encryption if variable `file` is not none
-    file = args.encrypt
-    if file is not None:
-        Cryptfile(file).encrypt_file()
+    files = args.encrypt
+    if files is not None:
+        Cryptfile(files).encrypt_file()
         # delete file if `-r` is set
-        if args.remove: os.remove(file)
+        if args.remove:
+            set(map(lambda file: os.remove(file), files))
 
     # Start file decryption if variable `file` is not none
-    file = args.decrypt
-    if file is not None:
-        Cryptfile(file).decrypt_file()
+    files = args.decrypt
+    if files is not None:
+        Cryptfile(files).decrypt_file()
         # delete file if `-r` is set
-        if args.remove: os.remove(file)
+        if args.remove:
+            set(map(lambda file: os.remove(file), files))
 
     # Start directory archiving and encryption if variable `directory` is not none
     directory = args.encrypt_dir
@@ -326,10 +333,10 @@ if __name__ == "__main__":
 
     parser.add_argument("-r", "--remove", action="store_true",
                         help="delete original file or directory after encryption or decryption")
-    parser.add_argument("-e", "--encrypt", help="encrypt the specified file", type=str)
-    parser.add_argument("-d", "--decrypt", help="decrypt the specified file", type=str)
-    parser.add_argument("-ed", "--encrypt-dir", help="encrypt directory", type=str)
-    parser.add_argument("-dd", "--decrypt-dir", help="decrypt directory", type=str)
+    parser.add_argument("-e", "--encrypt", nargs="+", type=str, help="encrypt the specified file")
+    parser.add_argument("-d", "--decrypt", nargs="+", type=str, help="decrypt the specified file")
+    parser.add_argument("-ed", "--encrypt-dir", nargs="+", type=str, help="encrypt directory")
+    parser.add_argument("-dd", "--decrypt-dir", nargs="+", type=str, help="decrypt directory")
 
     args = parser.parse_args()
     if len(sys.argv) == 1: parser.print_help(); sys.exit(1)
