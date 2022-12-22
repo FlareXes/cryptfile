@@ -11,6 +11,9 @@ chmod +x setup
 ```
 
 # Usage
+
+> Note: `Cryptfile` doesn't follow symbolic links.
+
 ### File
 - To encrypt the file
     ```
@@ -31,40 +34,15 @@ chmod +x setup
 ### Directory
 - To encrypt the directory
     ```
-    cryptfile -er <dirname>
+    cryptfile -ed <dirname>
     ```
-    Recursively encrypt all files inside directory but not inside subdirectories
-
-
-- To encrypt the directory with depth
-    ```
-    cryptfile -er <dirname> --depth 2
-    ```
-    Recursively encrypt all files inside specified directory till defined depth
-
-
-- To encrypt whole directory till possible
-    ```
-    cryptfile -er <dirname> --depth -1
-    ```
-    Any negative value of `--depth` will recursively encrypt all files inside specified directory
-
 
 - To decrypt the specified directory
     ```
-    cryptfile -dr <dirname> --depth 2
-    ```
-  Decrypt the file inside specified directory till depth 2
-
-
-- To remove original file after any operation use `-r`
-    ```
-    cryptfile -dr <dirname> --depth -1 -r
+    cryptfile -dd <dirname>
     ```
 
 ---
-
-> Note: `Cryptfile` doesn't follow symbolic links.
 
 # Licence 
 This work by [FlareXes](https://github.com/FlareXes) is Licenced Under [GNU GPLv3](LICENCE)
