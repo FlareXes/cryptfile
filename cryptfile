@@ -1,5 +1,15 @@
 #!/bin/sh
 
-python3 /opt/cryptfile/cryptfile.py "$@"
+# Check if /opt/cryptfile/ directory does not exist
+if ! [ -d /opt/cryptfile/ ]; then
+  echo -e "\033[1;31mError: Cryptfile not installed.\033[0m" >&2
+  exit 1
+fi
 
-exit 0
+# Check if /opt/cryptfile/cryptfile.py file does not exist
+if ! [ -f /opt/cryptfile/cryptfile.py ]; then
+  echo -e "\033[1;31mError: Failed to start cryptfile, '/opt/cryptfile/cryptfile.py' not found.\033[0m" >&2
+  exit 1
+fi
+
+python3 /opt/cryptfile/cryptfile.py "$@"
