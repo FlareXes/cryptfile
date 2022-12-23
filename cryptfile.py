@@ -4,7 +4,8 @@ import pickle
 import sys
 from dataclasses import dataclass, astuple
 from getpass import getpass
-from shutil import make_archive, rmtree, unpack_archive
+from shutil import make_archive, unpack_archive, rmtree
+from typing import Set
 
 from Cryptodome.Cipher import AES
 from Cryptodome.Hash.SHA256 import SHA256Hash
@@ -211,16 +212,16 @@ class Security:
 class Cryptfile:
     """Cryptfile class provides user interation functionality and prepare files for encryption and decryption."""
 
-    def __init__(self, files: str = None, directory: str = None):
+    def __init__(self, files: Set = None, directories: Set = None):
         """Initializes the Cryptfile object
         :param files: The file to be encrypted or decrypted
-        :type files: str
-        :param directory: The directory to be encrypted or decrypted
-        :type directory: str
+        :type files: set
+        :param directories: The directory to be encrypted or decrypted
+        :type directories: set
         """
 
         self.files = files
-        self.directory = directory
+        self.directories = directories
 
     def encrypt_file(self):
         """
@@ -272,58 +273,65 @@ class Cryptfile:
             print(f"Decrypting [ {file} ] \t [+] Completed", end="\n", flush=True)
 
     def encrypt_dir(self):
-        print(f"[+] Archiving {self.directory}\n")
-        zip_loc = Utils.zip_dir(self.directory)
+        zips_loc = set()
+        print(f"Archiving {self.directories}\n")
+        for directory in self.directories:
+            zips_loc.add(Utils.zip_dir(directory))
 
-        Cryptfile(zip_loc).encrypt_file()
+        Cryptfile(files=zips_loc).encrypt_file()
 
         # Remove zipfile after encryption
-        print(f"Removing archived files {zip_loc}")
-        os.remove(zip_loc)
+        print(f"Removing archived files...")
+        set(map(lambda zipfile: os.remove(zipfile), zips_loc))
 
     def decrypt_dir(self):
+        zips_loc = set()
         Cryptfile(self.files).decrypt_file()
 
-        # extract zipfile after encryption
         print(f"Extracting archived files {self.files}")
-        zip_file = self.files.split(".enc")[0]
-        Utils.unzip_dir(zip_file)
+        for file in self.files:
+            # extract zipfile after encryption
+            zip_file = file.split(".enc")[0]
+            Utils.unzip_dir(zip_file)
+            zips_loc.add(zip_file)
 
         # Remove zipfile after encryption
-        print(f"Removing archived files {zip_file}")
-        os.remove(zip_file)
+        print(f"Removing archived files...")
+        set(map(lambda zipfile: os.remove(zipfile), zips_loc))
 
 
 def process(args):
-    # Start file encryption if variable `file` is not none
-    files = args.encrypt
+    # Start file encryption if variable `files` is not none
+    files = set(args.encrypt)
     if files is not None:
-        Cryptfile(files).encrypt_file()
+        Cryptfile(files=files).encrypt_file()
         # delete file if `-r` is set
         if args.remove:
             set(map(lambda file: os.remove(file), files))
 
-    # Start file decryption if variable `file` is not none
-    files = args.decrypt
+    # Start file decryption if variable `files` is not none
+    files = set(args.decrypt)
     if files is not None:
-        Cryptfile(files).decrypt_file()
+        Cryptfile(files=files).decrypt_file()
         # delete file if `-r` is set
         if args.remove:
             set(map(lambda file: os.remove(file), files))
 
-    # Start directory archiving and encryption if variable `directory` is not none
-    directory = args.encrypt_dir
-    if directory is not None:
-        Cryptfile(directory=directory).encrypt_dir()
+    # Start directory archiving and encryption if variable `directories` is not none
+    directories = set(args.encrypt_dir)
+    if directories is not None:
+        Cryptfile(directories=directories).encrypt_dir()
         # delete directory if `-r` is set
-        if args.remove: rmtree(directory, ignore_errors=False)
+        if args.remove:
+            set(map(lambda directory: rmtree(directory, ignore_errors=False), directories))
 
-    # Start directory archiving and encryption if variable `directory` is not none
-    file = args.decrypt_dir
-    if file is not None:
-        Cryptfile(file).decrypt_dir()
+    # Start directory archiving and encryption if variable `files` is not none
+    files = set(args.decrypt_dir)
+    if files is not None:
+        Cryptfile(files=files).decrypt_dir()
         # delete directory if `-r` is set
-        if args.remove: os.remove(file)
+        if args.remove:
+            set(map(lambda file: os.remove(file), files))
 
 
 if __name__ == "__main__":
