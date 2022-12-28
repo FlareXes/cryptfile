@@ -302,33 +302,33 @@ class Cryptfile:
 
 def process(args):
     # Start file encryption if variable `files` is not none
-    files = set(args.encrypt)
+    files = args.encrypt
     if files is not None:
-        Cryptfile(files=files).encrypt_file()
+        Cryptfile(files=set(files)).encrypt_file()
         # delete file if `-r` is set
         if args.remove:
             set(map(lambda file: os.remove(file), files))
 
     # Start file decryption if variable `files` is not none
-    files = set(args.decrypt)
+    files = args.decrypt
     if files is not None:
-        Cryptfile(files=files).decrypt_file()
+        Cryptfile(files=set(files)).decrypt_file()
         # delete file if `-r` is set
         if args.remove:
             set(map(lambda file: os.remove(file), files))
 
     # Start directory archiving and encryption if variable `directories` is not none
-    directories = set(args.encrypt_dir)
+    directories = args.encrypt_dir
     if directories is not None:
-        Cryptfile(directories=directories).encrypt_dir()
+        Cryptfile(directories=set(directories)).encrypt_dir()
         # delete directory if `-r` is set
         if args.remove:
             set(map(lambda directory: rmtree(directory, ignore_errors=False), directories))
 
     # Start directory archiving and encryption if variable `files` is not none
-    files = set(args.decrypt_dir)
+    files = args.decrypt_dir
     if files is not None:
-        Cryptfile(files=files).decrypt_dir()
+        Cryptfile(files=set(files)).decrypt_dir()
         # delete directory if `-r` is set
         if args.remove:
             set(map(lambda file: os.remove(file), files))
