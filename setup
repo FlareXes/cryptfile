@@ -43,7 +43,7 @@ if ! sudo cp ./cryptfile.py /opt/cryptfile/; then
 fi
 
 # Copy the 'cryptfile' script to /usr/local/bin/cryptfile
-if ! sudo cp ./cryptfile /usr/local/bin/cryptfile; then
+if ! sudo cp ./bin/cryptfile /usr/local/bin/cryptfile; then
   log_echo "Error: Failed to copy the 'cryptfile' script to /usr/local/bin/cryptfile" "red"
 fi
 
