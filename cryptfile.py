@@ -68,7 +68,7 @@ class Utils:
         """
 
         with open(file + ".enc", "wb") as f:
-            pickle.dump(data, f, -1)
+            pickle.dump(data.__dict__, f, -1)
 
     @staticmethod
     def save_file(data, file):
@@ -100,7 +100,8 @@ class Utils:
 
         with open(file, "rb") as f:
             if pickled:
-                data = pickle.load(f)
+                data_dict = pickle.load(f)
+                data = Template.CipherConfig(**data_dict)
             else:
                 data = f.read()
         return data
