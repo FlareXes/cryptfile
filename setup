@@ -26,7 +26,7 @@ if ! pip install -r requirements.txt; then
 fi
 
 # Make the cryptfile script executable
-if ! chmod +x ./cryptfile; then
+if ! chmod +x ./bin/cryptfile; then
   log_echo "Error: Failed to make the cryptfile executable" "red"
 fi
 
