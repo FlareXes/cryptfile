@@ -37,6 +37,18 @@ if ! cp ./cryptfile.py ./LICENCE ./requirements.txt ./README.md /opt/cryptfile/;
   log_echo "Error: Failed to copy files to /opt/cryptfile/" "red"
 fi
 
+# Create the /usr/share/licenses/cryptfile/ directory if it does not exist
+if ! [ -d /usr/share/licenses/cryptfile/ ]; then
+  if ! sudo mkdir -p /usr/share/licenses/cryptfile/; then
+    log_echo "Error: Failed to create the /usr/share/licenses/cryptfile/ directory" "red"
+  fi
+fi
+
+# Copy the LICENSE to /usr/share/licenses/cryptfile/
+if ! sudo cp ./LICENCE /usr/share/licenses/cryptfile/; then
+  log_echo "Error: Failed to copy LICENSE to /usr/share/licenses/cryptfile/" "red"
+fi
+
 # Create python virtual environment to install dependencies
 if ! python3 -m venv /opt/cryptfile/venv; then
   log_echo "Error: Failed to create virtual environment of /opt/cryptfile/" "red"
