@@ -12,4 +12,4 @@ if ! [ -f /opt/cryptfile/cryptfile.py ]; then
   exit 1
 fi
 
-python3 /opt/cryptfile/cryptfile.py "$@"
+/opt/cryptfile/venv/bin/python3 /opt/cryptfile/cryptfile.py "$@"

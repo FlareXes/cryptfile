@@ -20,8 +20,30 @@ function log_echo() {
   fi
 }
 
-# Install required dependencies
-if ! pip install -r requirements.txt; then
+# Create the /opt/cryptfile/ directory if it does not exist
+if ! [ -d /opt/cryptfile/ ]; then
+  if ! sudo mkdir -p /opt/cryptfile/; then
+    log_echo "Error: Failed to create the /opt/cryptfile/ directory" "red"
+  fi
+fi
+
+# Make the /opt/cryptfile/ directory owned by the current user
+if ! sudo chown -R "$(whoami):$(whoami)" /opt/cryptfile/; then
+  log_echo "Error: Failed to change ownership of /opt/cryptfile/" "red"
+fi
+
+# Copy files file to /opt/cryptfile/
+if ! cp ./cryptfile.py ./LICENCE ./requirements.txt ./README.md /opt/cryptfile/; then
+  log_echo "Error: Failed to copy files to /opt/cryptfile/" "red"
+fi
+
+# Create python virtual environment to install dependencies
+if ! python3 -m venv /opt/cryptfile/venv; then
+  log_echo "Error: Failed to create virtual environment of /opt/cryptfile/" "red"
+fi
+
+# Install dependencies
+if ! /opt/cryptfile/venv/bin/python3 -m pip install -r /opt/cryptfile/requirements.txt; then
   log_echo "Error: Failed to install the dependencies" "red"
 fi
 
@@ -30,31 +52,9 @@ if ! chmod +x ./bin/cryptfile; then
   log_echo "Error: Failed to make the cryptfile executable" "red"
 fi
 
-# Create the /opt/cryptfile/ directory if it does not exist
-if ! [ -d /opt/cryptfile/ ]; then
-  if ! sudo mkdir -p /opt/cryptfile/; then
-    log_echo "Error: Failed to create the /opt/cryptfile/ directory" "red"
-  fi
-fi
-
-# Copy cryptfile.py file to /opt/cryptfile/
-if ! sudo cp ./cryptfile.py /opt/cryptfile/; then
-  log_echo "Error: Failed to copy files to /opt/cryptfile/" "red"
-fi
-
 # Copy the 'cryptfile' script to /usr/local/bin/cryptfile
 if ! sudo cp ./bin/cryptfile /usr/local/bin/cryptfile; then
   log_echo "Error: Failed to copy the 'cryptfile' script to /usr/local/bin/cryptfile" "red"
-fi
-
-# Make the /opt/cryptfile/ directory owned by the current user
-if ! sudo chown -R "$(whoami):$(whoami)" /opt/cryptfile/; then
-  log_echo "Error: Failed to change ownership of /opt/cryptfile/" "red"
-fi
-
-# Make the /usr/local/bin/cryptfile owned by the current user
-if ! sudo chown "$(whoami):$(whoami)" /usr/local/bin/cryptfile; then
-  log_echo "Error: Failed to change ownership of /usr/local/bin/cryptfile" "red"
 fi
 
 log_echo "Now you can delete cloned repository" "green"
