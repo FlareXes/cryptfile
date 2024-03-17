@@ -137,17 +137,20 @@ class Security:
         self.key_length = 32
 
     @staticmethod
-    def getpass():
+    def getpass(no_check: bool = False):
         """
-        Prompt the user to enter a password and re-enter it to confirm. If the passwords match,
-        return the hashed password as bytes. Otherwise, print an error message and exit the program.
+        Hash the passwords entered by the user and return a hashed password if `no_check` is True, 
+        else compare the two passwords  to confirm while encryption and return a hashed password if they match.
 
+        :param no_check: If True, do not check for password matching. Defaults to False.
+        :type no_check: bool
         :return: The hashed password
         :rtype: bytes
         """
 
         # Hash the passwords entered by the user
         p1 = SHA256Hash(getpass("Enter Password: ").encode("utf-8")).hexdigest()
+        if no_check: return p1.encode("utf-8")
         p2 = SHA256Hash(getpass("Re-enter Password: ").encode("utf-8")).hexdigest()
 
         if p1 == p2:
@@ -258,7 +261,7 @@ class Cryptfile:
         """
 
         # Get password hash
-        password_hash = Security.getpass()
+        password_hash = Security.getpass(no_check=True)
 
         for file in self.files:
             # Get file content in picked bytes format to decrypt
